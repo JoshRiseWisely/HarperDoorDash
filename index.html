@@ -631,124 +631,110 @@
         </div>
 
         <div class="menu-section">
-            <h2>☕ Hot Drinks</h2>
+            <h2>🍩 Food & Drinks</h2>
             
+            <div class="menu-item">
+                <span class="emoji">🍩</span>
+                <div class="details">
+                    <div class="name">Donuts</div>
+                    <div class="description">Fresh and sprinkled with love</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('donuts', 'Donuts', '🍩', 2)">+</button>
+            </div>
+
             <div class="menu-item">
                 <span class="emoji">☕</span>
                 <div class="details">
-                    <div class="name">Classic Coffee</div>
+                    <div class="name">Coffee</div>
                     <div class="description">A warm cup of pretend coffee goodness</div>
                 </div>
                 <span class="price">$2</span>
-                <button class="add-btn" onclick="addToCart('coffee', 'Classic Coffee', '☕', 2)">+</button>
+                <button class="add-btn" onclick="addToCart('coffee', 'Coffee', '☕', 2)">+</button>
             </div>
 
             <div class="menu-item">
-                <span class="emoji">🍫</span>
+                <span class="emoji">🍞</span>
                 <div class="details">
-                    <div class="name">Hot Chocolate</div>
-                    <div class="description">Extra chocolatey with marshmallows!</div>
-                </div>
-                <span class="price">$3</span>
-                <button class="add-btn" onclick="addToCart('hotchoc', 'Hot Chocolate', '🍫', 3)">+</button>
-            </div>
-
-            <div class="menu-item">
-                <span class="emoji">🍵</span>
-                <div class="details">
-                    <div class="name">Warm Tea</div>
-                    <div class="description">Cozy and comforting</div>
+                    <div class="name">Bread with Butter</div>
+                    <div class="description">Warm bread with melty butter</div>
                 </div>
                 <span class="price">$2</span>
-                <button class="add-btn" onclick="addToCart('tea', 'Warm Tea', '🍵', 2)">+</button>
+                <button class="add-btn" onclick="addToCart('breadbutter', 'Bread with Butter', '🍞', 2)">+</button>
             </div>
-        </div>
 
-        <div class="menu-section">
-            <h2>🧊 Cold Drinks</h2>
-            
             <div class="menu-item">
-                <span class="emoji">🧋</span>
+                <span class="emoji">🫒</span>
                 <div class="details">
-                    <div class="name">Iced Coffee</div>
-                    <div class="description">Cool and refreshing</div>
+                    <div class="name">Bread with EVOO</div>
+                    <div class="description">Fancy bread with extra virgin olive oil</div>
                 </div>
                 <span class="price">$3</span>
-                <button class="add-btn" onclick="addToCart('icedcoffee', 'Iced Coffee', '🧋', 3)">+</button>
+                <button class="add-btn" onclick="addToCart('breadevoo', 'Bread with EVOO', '🫒', 3)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🍊</span>
+                <div class="details">
+                    <div class="name">Orange Juice</div>
+                    <div class="description">Freshly squeezed sunshine</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('oj', 'Orange Juice', '🍊', 2)">+</button>
             </div>
 
             <div class="menu-item">
                 <span class="emoji">🥤</span>
                 <div class="details">
-                    <div class="name">Lemonade</div>
-                    <div class="description">Sweet and tangy</div>
+                    <div class="name">Coca Zero</div>
+                    <div class="description">Zero sugar, maximum refreshment</div>
                 </div>
                 <span class="price">$2</span>
-                <button class="add-btn" onclick="addToCart('lemonade', 'Lemonade', '🥤', 2)">+</button>
+                <button class="add-btn" onclick="addToCart('cokezero', 'Coca Zero', '🥤', 2)">+</button>
             </div>
 
             <div class="menu-item">
-                <span class="emoji">🫧</span>
+                <span class="emoji">☕</span>
                 <div class="details">
-                    <div class="name">Bubbly Water</div>
-                    <div class="description">Fizzy and refreshing</div>
+                    <div class="name">Creamy Coffee</div>
+                    <div class="description">Extra cream, extra dreamy</div>
                 </div>
-                <span class="price">$2</span>
-                <button class="add-btn" onclick="addToCart('bubblywater', 'Bubbly Water', '🫧', 2)">+</button>
+                <span class="price">$3</span>
+                <button class="add-btn" onclick="addToCart('creamycoffee', 'Creamy Coffee', '☕', 3)">+</button>
+            </div>
+
+            <div class="menu-item" style="background: linear-gradient(135deg, #fff9c4, #fff176); border: 3px dashed #ffd600;">
+                <span class="emoji">🧈</span>
+                <div class="details">
+                    <div class="name">One Heaping Stick of Butter for Nance</div>
+                    <div class="description">Just a whole stick. For Nance. She knows.</div>
+                </div>
+                <span class="price">$4</span>
+                <button class="add-btn" style="background: #ffd600; color: #5d4e37;" onclick="addToCart('nancebutter', 'Heaping Stick of Butter for Nance', '🧈', 4)">+</button>
             </div>
         </div>
 
         <div class="menu-section">
-            <h2>🍪 Snacks</h2>
-            
+            <h2>✨ Specials</h2>
+
             <div class="menu-item">
-                <span class="emoji">🍪</span>
+                <span class="emoji">👊</span>
                 <div class="details">
-                    <div class="name">Cookie</div>
-                    <div class="description">Fresh baked chocolate chip</div>
+                    <div class="name">Knuckle Sammich</div>
+                    <div class="description">Served fresh, no charge for the attitude</div>
                 </div>
                 <span class="price">$1</span>
-                <button class="add-btn" onclick="addToCart('cookie', 'Cookie', '🍪', 1)">+</button>
+                <button class="add-btn" onclick="addToCart('knuckle', 'Knuckle Sammich', '👊', 1)">+</button>
             </div>
 
             <div class="menu-item">
-                <span class="emoji">🧁</span>
+                <span class="emoji">💥</span>
                 <div class="details">
-                    <div class="name">Cupcake</div>
-                    <div class="description">With rainbow sprinkles!</div>
+                    <div class="name">A Bruisin</div>
+                    <div class="description">You asked for it!</div>
                 </div>
-                <span class="price">$3</span>
-                <button class="add-btn" onclick="addToCart('cupcake', 'Cupcake', '🧁', 3)">+</button>
-            </div>
-
-            <div class="menu-item" style="background: linear-gradient(135deg, #ffd1f7, #c4f0ff, #fffac4); border: 3px dashed #ff6bf0;">
-                <span class="emoji">🏰</span>
-                <div class="details">
-                    <div class="name">Trip to Disney World ✨</div>
-                    <div class="description">Includes flights, park tickets, and Mickey ears!</div>
-                </div>
-                <span class="price">$5,000</span>
-                <button class="add-btn" style="background: #ff6bf0;" onclick="addToCart('disney', 'Trip to Disney World ✨', '🏰', 5000)">+</button>
-            </div>
-
-            <div class="menu-item">
-                <span class="emoji">🍑</span>
-                <div class="details">
-                    <div class="name">Lincoln's Little Butt</div>
-                    <div class="description">It's so cute!</div>
-                </div>
-                <span class="price">$5</span>
-                <button class="add-btn" onclick="addToCart('lincolnbutt', 'Lincolns Little Butt', '🍑', 5)">+</button>
-            </div>
-
-            <div class="menu-item">
-                <span class="emoji">🥐</span>
-                <div class="details">
-                    <div class="name">Croissant</div>
-                    <div class="description">Buttery and flaky</div>
-                </div>
-                <span class="price">$2</span>
-                <button class="add-btn" onclick="addToCart('croissant', 'Croissant', '🥐', 2)">+</button>
+                <span class="price">$1</span>
+                <button class="add-btn" onclick="addToCart('bruisin', 'A Bruisin', '💥', 1)">+</button>
             </div>
         </div>
 
@@ -808,6 +794,17 @@
         <div class="harper-header">
             <h1>👩‍🍳 Harper's Kitchen</h1>
             <p class="order-count">You have <span id="active-order-count">0</span> orders to make!</p>
+            <button onclick="clearAllOrders()" style="
+                margin-top: 15px;
+                padding: 12px 30px;
+                background: rgba(255,255,255,0.2);
+                color: white;
+                border: 2px solid white;
+                border-radius: 50px;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
+            ">🗑️ Clear All Orders</button>
         </div>
 
         <div id="orders-container">
@@ -1117,6 +1114,14 @@
         // Update order status
         function updateOrderStatus(orderId, newStatus) {
             database.ref('orders/' + orderId + '/status').set(newStatus);
+        }
+
+        // Clear all orders
+        function clearAllOrders() {
+            if (confirm('Clear all orders? This cannot be undone!')) {
+                database.ref('orders').remove();
+                database.ref('orderCounter').set(0);
+            }
         }
 
         // Start shift - unlocks audio
