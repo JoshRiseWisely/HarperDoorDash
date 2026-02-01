@@ -755,6 +755,36 @@
 
     <!-- Harper's View -->
     <div id="harper-view" class="view active">
+        <!-- Start Shift Overlay -->
+        <div id="start-shift-overlay" style="
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        ">
+            <div style="font-size: 5em; margin-bottom: 20px;">👩‍🍳</div>
+            <h1 style="font-size: 2.5em; margin-bottom: 10px;">Harper's Kitchen</h1>
+            <p style="font-size: 1.3em; margin-bottom: 40px; opacity: 0.9;">Ready to make some coffee?</p>
+            <button onclick="startShift()" style="
+                padding: 25px 60px;
+                font-size: 1.5em;
+                font-weight: bold;
+                background: #ff6b6b;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                animation: pulse 2s infinite;
+            ">☕ Start My Shift!</button>
+        </div>
+
         <div class="harper-header">
             <h1>👩‍🍳 Harper's Kitchen</h1>
             <p class="order-count">You have <span id="active-order-count">0</span> orders to make!</p>
@@ -1067,6 +1097,18 @@
         // Update order status
         function updateOrderStatus(orderId, newStatus) {
             database.ref('orders/' + orderId + '/status').set(newStatus);
+        }
+
+        // Start shift - unlocks audio
+        function startShift() {
+            // Play sound once to unlock audio in browser
+            notificationSound.play().then(() => {
+                notificationSound.pause();
+                notificationSound.currentTime = 0;
+            }).catch(() => {});
+            
+            // Hide overlay
+            document.getElementById('start-shift-overlay').style.display = 'none';
         }
 
         // Sound notification
