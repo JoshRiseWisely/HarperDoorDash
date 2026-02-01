@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harper's Coffee Stand ☕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: 3px solid #ff6b6b;
+            background: white;
+            color: #ff6b6b;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .mode-btn:hover, .mode-btn.active {
+            background: #ff6b6b;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .view {
+            display: none;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Customer View Styles */
+        .store-header {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .store-header h1 {
+            font-size: 2.5em;
+            color: #5d4e37;
+            margin-bottom: 10px;
+        }
+
+        .store-header .subtitle {
+            color: #888;
+            font-size: 1.2em;
+        }
+
+        .store-header .open-badge {
+            display: inline-block;
+            background: #4ecdc4;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .menu-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .menu-section h2 {
+            color: #5d4e37;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px dashed #ffecd2;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fffaf5;
+            border-radius: 15px;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:hover {
+            transform: translateX(10px);
+        }
+
+        .menu-item .emoji {
+            font-size: 3em;
+            margin-right: 20px;
+        }
+
+        .menu-item .details {
+            flex: 1;
+        }
+
+        .menu-item .name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #5d4e37;
+        }
+
+        .menu-item .description {
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .menu-item .price {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-right: 15px;
+        }
+
+        .add-btn {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #45b7aa;
+            transform: scale(1.1);
+        }
+
+        /* Cart Styles */
+        .cart {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart h2 {
+            color: #5d4e37;
+            margin-bottom: 20px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #fffaf5;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cart-item .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .cart-item .name {
+            flex: 1;
+            font-weight: bold;
+            color: #5d4e37;
+        }
+
+        .cart-item .quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            margin-top: 15px;
+            border-top: 3px dashed #ffecd2;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #5d4e37;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .order-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Special Instructions */
+        .special-instructions {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed #ffecd2;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 1em;
+            resize: none;
+        }
+
+        /* Harper's View Styles */
+        .harper-header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .harper-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .harper-header .order-count {
+            font-size: 1.5em;
+            opacity: 0.9;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 20px;
+            color: #888;
+        }
+
+        .no-orders .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order-card.new {
+            border: 4px solid #ff6b6b;
+            animation: newOrder 1s ease infinite;
+        }
+
+        @keyframes newOrder {
+            0%, 100% { box-shadow: 0 5px 20px rgba(255,107,107,0.3); }
+            50% { box-shadow: 0 5px 40px rgba(255,107,107,0.6); }
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px dashed #ffecd2;
+        }
+
+        .order-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #5d4e37;
+        }
+
+        .order-time {
+            color: #888;
+        }
+
+        .order-status {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .order-status.new {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .order-status.preparing {
+            background: #ffd93d;
+            color: #5d4e37;
+        }
+
+        .order-status.ready {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .order-status.delivered {
+            background: #6bcb77;
+            color: white;
+        }
+
+        .order-items {
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #fffaf5;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-item .emoji {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+
+        .order-item .details {
+            flex: 1;
+        }
+
+        .order-item .qty {
+            background: #ff6b6b;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .order-instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .order-instructions strong {
+            color: #856404;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .action-btn.preparing {
+            background: #ffd93d;
+            color: #5d4e37;
+        }
+
+        .action-btn.ready {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .action-btn.delivered {
+            background: #6bcb77;
+            color: white;
+        }
+
+        /* Order Confirmation Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-content .emoji {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .modal-content h2 {
+            color: #5d4e37;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .modal-content .order-num {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            padding: 15px 40px;
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        /* Notification Sound Indicator */
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 100;
+        }
+
+        /* Customer Name Input */
+        .customer-name-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .customer-name-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #5d4e37;
+        }
+
+        .customer-name-section input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ffecd2;
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+
+        .customer-name-section input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        /* Delivered Orders Section */
+        .delivered-section {
+            margin-top: 40px;
+            opacity: 0.7;
+        }
+
+        .delivered-section h2 {
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .delivered-section .order-card {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mode Selector -->
+    <div class="mode-selector">
+        <button class="mode-btn active" onclick="showView('customer')">🛒 Order Coffee</button>
+        <button class="mode-btn" onclick="showView('harper')">👩‍🍳 Harper's Orders</button>
+    </div>
+
+    <!-- Customer View -->
+    <div id="customer-view" class="view active">
+        <div class="store-header">
+            <h1>☕ Harper's Coffee Stand</h1>
+            <p class="subtitle">The Best Pretend Coffee in Town!</p>
+            <span class="open-badge">✨ OPEN NOW ✨</span>
+        </div>
+
+        <div class="customer-name-section">
+            <label>👋 Your Name:</label>
+            <input type="text" id="customer-name" placeholder="Who's ordering?" value="Uncle/Auntie">
+        </div>
+
+        <div class="menu-section">
+            <h2>☕ Hot Drinks</h2>
+            
+            <div class="menu-item">
+                <span class="emoji">☕</span>
+                <div class="details">
+                    <div class="name">Classic Coffee</div>
+                    <div class="description">A warm cup of pretend coffee goodness</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('coffee', 'Classic Coffee', '☕', 2)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🍫</span>
+                <div class="details">
+                    <div class="name">Hot Chocolate</div>
+                    <div class="description">Extra chocolatey with marshmallows!</div>
+                </div>
+                <span class="price">$3</span>
+                <button class="add-btn" onclick="addToCart('hotchoc', 'Hot Chocolate', '🍫', 3)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🍵</span>
+                <div class="details">
+                    <div class="name">Warm Tea</div>
+                    <div class="description">Cozy and comforting</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('tea', 'Warm Tea', '🍵', 2)">+</button>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <h2>🧊 Cold Drinks</h2>
+            
+            <div class="menu-item">
+                <span class="emoji">🧋</span>
+                <div class="details">
+                    <div class="name">Iced Coffee</div>
+                    <div class="description">Cool and refreshing</div>
+                </div>
+                <span class="price">$3</span>
+                <button class="add-btn" onclick="addToCart('icedcoffee', 'Iced Coffee', '🧋', 3)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🥤</span>
+                <div class="details">
+                    <div class="name">Lemonade</div>
+                    <div class="description">Sweet and tangy</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('lemonade', 'Lemonade', '🥤', 2)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🥛</span>
+                <div class="details">
+                    <div class="name">Chocolate Milk</div>
+                    <div class="description">Creamy chocolate deliciousness</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('chocomilk', 'Chocolate Milk', '🥛', 2)">+</button>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <h2>🍪 Snacks</h2>
+            
+            <div class="menu-item">
+                <span class="emoji">🍪</span>
+                <div class="details">
+                    <div class="name">Cookie</div>
+                    <div class="description">Fresh baked chocolate chip</div>
+                </div>
+                <span class="price">$1</span>
+                <button class="add-btn" onclick="addToCart('cookie', 'Cookie', '🍪', 1)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🧁</span>
+                <div class="details">
+                    <div class="name">Cupcake</div>
+                    <div class="description">With rainbow sprinkles!</div>
+                </div>
+                <span class="price">$3</span>
+                <button class="add-btn" onclick="addToCart('cupcake', 'Cupcake', '🧁', 3)">+</button>
+            </div>
+
+            <div class="menu-item">
+                <span class="emoji">🥐</span>
+                <div class="details">
+                    <div class="name">Croissant</div>
+                    <div class="description">Buttery and flaky</div>
+                </div>
+                <span class="price">$2</span>
+                <button class="add-btn" onclick="addToCart('croissant', 'Croissant', '🥐', 2)">+</button>
+            </div>
+        </div>
+
+        <div class="cart">
+            <h2>🛒 Your Order</h2>
+            <div id="cart-items">
+                <div class="cart-empty">
+                    <p>Your cart is empty!</p>
+                    <p>Add some yummy items 👆</p>
+                </div>
+            </div>
+            <div id="cart-total" style="display: none;">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="total-amount">$0</span>
+                </div>
+                <textarea class="special-instructions" id="special-instructions" placeholder="Special instructions for Harper... (extra sugar, no ice, etc.)"></textarea>
+                <button class="order-btn" id="place-order-btn" onclick="placeOrder()">
+                    🚀 Place Order!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Harper's View -->
+    <div id="harper-view" class="view">
+        <div class="harper-header">
+            <h1>👩‍🍳 Harper's Kitchen</h1>
+            <p class="order-count">You have <span id="active-order-count">0</span> orders to make!</p>
+        </div>
+
+        <div id="orders-container">
+            <div class="no-orders">
+                <div class="emoji">😴</div>
+                <h2>No orders yet!</h2>
+                <p>Waiting for customers...</p>
+            </div>
+        </div>
+
+        <div id="delivered-orders" class="delivered-section" style="display: none;">
+            <h2>✅ Completed Orders</h2>
+            <div id="delivered-container"></div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <div class="emoji">🎉</div>
+            <h2>Order Placed!</h2>
+            <p>Harper is getting your order ready!</p>
+            <div class="order-num">Order #<span id="modal-order-num">1</span></div>
+            <button class="modal-close" onclick="closeModal()">Got it!</button>
+        </div>
+    </div>
+
+    <!-- Sound Toggle -->
+    <div class="sound-toggle" id="sound-toggle" onclick="toggleSound()">🔔</div>
+
+    <script>
+        // State
+        let cart = {};
+        let orders = [];
+        let orderCounter = 1;
+        let soundEnabled = true;
+
+        // Load from localStorage
+        function loadState() {
+            const savedOrders = localStorage.getItem('harpersCoffeeOrders');
+            const savedCounter = localStorage.getItem('harpersCoffeeCounter');
+            
+            if (savedOrders) {
+                orders = JSON.parse(savedOrders);
+            }
+            if (savedCounter) {
+                orderCounter = parseInt(savedCounter);
+            }
+        }
+
+        // Save to localStorage
+        function saveState() {
+            localStorage.setItem('harpersCoffeeOrders', JSON.stringify(orders));
+            localStorage.setItem('harpersCoffeeCounter', orderCounter.toString());
+        }
+
+        // Switch between views
+        function showView(view) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(view + '-view').classList.add('active');
+            document.querySelector(`.mode-btn[onclick="showView('${view}')"]`).classList.add('active');
+            
+            if (view === 'harper') {
+                renderOrders();
+            }
+        }
+
+        // Add item to cart
+        function addToCart(id, name, emoji, price) {
+            if (cart[id]) {
+                cart[id].quantity++;
+            } else {
+                cart[id] = { name, emoji, price, quantity: 1 };
+            }
+            renderCart();
+            
+            // Fun animation feedback
+            const btn = event.target;
+            btn.textContent = '✓';
+            setTimeout(() => btn.textContent = '+', 300);
+        }
+
+        // Update cart quantity
+        function updateQuantity(id, delta) {
+            cart[id].quantity += delta;
+            if (cart[id].quantity <= 0) {
+                delete cart[id];
+            }
+            renderCart();
+        }
+
+        // Render cart
+        function renderCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const items = Object.entries(cart);
+            
+            if (items.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="cart-empty">
+                        <p>Your cart is empty!</p>
+                        <p>Add some yummy items 👆</p>
+                    </div>
+                `;
+                cartTotal.style.display = 'none';
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            items.forEach(([id, item]) => {
+                total += item.price * item.quantity;
+                html += `
+                    <div class="cart-item">
+                        <span class="emoji">${item.emoji}</span>
+                        <span class="name">${item.name}</span>
+                        <div class="quantity">
+                            <button class="qty-btn" onclick="updateQuantity('${id}', -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQuantity('${id}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItems.innerHTML = html;
+            document.getElementById('total-amount').textContent = '$' + total;
+            cartTotal.style.display = 'block';
+        }
+
+        // Place order
+        function placeOrder() {
+            const customerName = document.getElementById('customer-name').value || 'Customer';
+            const instructions = document.getElementById('special-instructions').value;
+            
+            const items = Object.entries(cart).map(([id, item]) => ({
+                ...item,
+                id
+            }));
+            
+            let total = 0;
+            items.forEach(item => total += item.price * item.quantity);
+            
+            const order = {
+                id: orderCounter++,
+                customer: customerName,
+                items: items,
+                total: total,
+                instructions: instructions,
+                status: 'new',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            orders.unshift(order);
+            saveState();
+            
+            // Show confirmation
+            document.getElementById('modal-order-num').textContent = order.id;
+            document.getElementById('order-modal').classList.add('active');
+            
+            // Play sound for Harper
+            playNotification();
+            
+            // Clear cart
+            cart = {};
+            document.getElementById('special-instructions').value = '';
+            renderCart();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('order-modal').classList.remove('active');
+        }
+
+        // Render orders for Harper
+        function renderOrders() {
+            const container = document.getElementById('orders-container');
+            const deliveredContainer = document.getElementById('delivered-container');
+            const deliveredSection = document.getElementById('delivered-orders');
+            
+            const activeOrders = orders.filter(o => o.status !== 'delivered');
+            const deliveredOrders = orders.filter(o => o.status === 'delivered');
+            
+            document.getElementById('active-order-count').textContent = activeOrders.length;
+            
+            if (activeOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="no-orders">
+                        <div class="emoji">😴</div>
+                        <h2>No orders yet!</h2>
+                        <p>Waiting for customers...</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = activeOrders.map(order => renderOrderCard(order)).join('');
+            }
+            
+            if (deliveredOrders.length > 0) {
+                deliveredSection.style.display = 'block';
+                deliveredContainer.innerHTML = deliveredOrders.slice(0, 5).map(order => renderOrderCard(order)).join('');
+            } else {
+                deliveredSection.style.display = 'none';
+            }
+        }
+
+        // Render single order card
+        function renderOrderCard(order) {
+            const statusClass = order.status;
+            const statusText = {
+                'new': '🆕 NEW ORDER!',
+                'preparing': '👩‍🍳 Making it...',
+                'ready': '✅ Ready!',
+                'delivered': '🎉 Delivered!'
+            }[order.status];
+            
+            let actionsHtml = '';
+            if (order.status === 'new') {
+                actionsHtml = `
+                    <button class="action-btn preparing" onclick="updateOrderStatus(${order.id}, 'preparing')">
+                        👩‍🍳 Start Making
+                    </button>
+                `;
+            } else if (order.status === 'preparing') {
+                actionsHtml = `
+                    <button class="action-btn ready" onclick="updateOrderStatus(${order.id}, 'ready')">
+                        ✅ It's Ready!
+                    </button>
+                `;
+            } else if (order.status === 'ready') {
+                actionsHtml = `
+                    <button class="action-btn delivered" onclick="updateOrderStatus(${order.id}, 'delivered')">
+                        🚀 Delivered!
+                    </button>
+                `;
+            }
+            
+            return `
+                <div class="order-card ${order.status === 'new' ? 'new' : ''}">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">Order #${order.id}</div>
+                            <div class="order-time">🕐 ${order.time} • 👤 ${order.customer}</div>
+                        </div>
+                        <span class="order-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="order-items">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span class="emoji">${item.emoji}</span>
+                                <div class="details">
+                                    <strong>${item.name}</strong>
+                                </div>
+                                <span class="qty">${item.quantity}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${order.instructions ? `
+                        <div class="order-instructions">
+                            <strong>📝 Special Request:</strong> ${order.instructions}
+                        </div>
+                    ` : ''}
+                    <div class="order-actions">
+                        ${actionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update order status
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                saveState();
+                renderOrders();
+            }
+        }
+
+        // Sound notification
+        function playNotification() {
+            if (!soundEnabled) return;
+            
+            // Create a simple beep using Web Audio API
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        // Toggle sound
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-toggle').textContent = soundEnabled ? '🔔' : '🔕';
+        }
+
+        // Check for new orders periodically (for Harper's view)
+        let lastOrderCount = 0;
+        setInterval(() => {
+            loadState();
+            const currentCount = orders.filter(o => o.status === 'new').length;
+            
+            if (currentCount > lastOrderCount && document.getElementById('harper-view').classList.contains('active')) {
+                playNotification();
+                renderOrders();
+            }
+            lastOrderCount = currentCount;
+        }, 2000);
+
+        // Initialize
+        loadState();
+        renderCart();
+    </script>
+</body>
+</html>
