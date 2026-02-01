@@ -529,7 +529,7 @@
             cursor: pointer;
         }
 
-        /* Notification Sound Indicator */
+        /* Sound Toggle */
         .sound-toggle {
             position: fixed;
             bottom: 20px;
@@ -586,9 +586,31 @@
         .delivered-section .order-card {
             opacity: 0.6;
         }
+
+        /* Connection Status */
+        .connection-status {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .connection-status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .connection-status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
+    <!-- Connection Status -->
+    <div id="connection-status" class="connection-status connected">
+        ✅ Connected - Orders sync across devices!
+    </div>
+
     <!-- Mode Selector -->
     <div class="mode-selector">
         <button class="mode-btn active" onclick="showView('customer')">🛒 Order Coffee</button>
@@ -766,30 +788,69 @@
     <!-- Sound Toggle -->
     <div class="sound-toggle" id="sound-toggle" onclick="toggleSound()">🔔</div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBeSLHNmbvMqyyIZ_MBMcpnr5UqWD2QFLI",
+            authDomain: "harpers-door-dash.firebaseapp.com",
+            databaseURL: "https://harpers-door-dash-default-rtdb.firebaseio.com",
+            projectId: "harpers-door-dash",
+            storageBucket: "harpers-door-dash.firebasestorage.app",
+            messagingSenderId: "382979755511",
+            appId: "1:382979755511:web:0d6bee0355dad2ea50b2f2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         // State
         let cart = {};
         let orders = [];
-        let orderCounter = 1;
         let soundEnabled = true;
+        let lastOrderCount = 0;
 
-        // Load from localStorage
-        function loadState() {
-            const savedOrders = localStorage.getItem('harpersCoffeeOrders');
-            const savedCounter = localStorage.getItem('harpersCoffeeCounter');
+        // Connection status
+        const connectedRef = database.ref('.info/connected');
+        connectedRef.on('value', (snap) => {
+            const statusEl = document.getElementById('connection-status');
+            if (snap.val() === true) {
+                statusEl.className = 'connection-status connected';
+                statusEl.textContent = '✅ Connected - Orders sync across devices!';
+            } else {
+                statusEl.className = 'connection-status disconnected';
+                statusEl.textContent = '❌ Disconnected - Trying to reconnect...';
+            }
+        });
+
+        // Listen for orders in real-time
+        const ordersRef = database.ref('orders');
+        ordersRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            orders = data ? Object.values(data) : [];
+            orders.sort((a, b) => b.id - a.id); // Sort by newest first
             
-            if (savedOrders) {
-                orders = JSON.parse(savedOrders);
+            // Check for new orders and play sound
+            const newOrderCount = orders.filter(o => o.status === 'new').length;
+            if (newOrderCount > lastOrderCount && document.getElementById('harper-view').classList.contains('active')) {
+                playNotification();
             }
-            if (savedCounter) {
-                orderCounter = parseInt(savedCounter);
-            }
-        }
+            lastOrderCount = newOrderCount;
+            
+            renderOrders();
+        });
 
-        // Save to localStorage
-        function saveState() {
-            localStorage.setItem('harpersCoffeeOrders', JSON.stringify(orders));
-            localStorage.setItem('harpersCoffeeCounter', orderCounter.toString());
+        // Get next order number
+        async function getNextOrderNumber() {
+            const counterRef = database.ref('orderCounter');
+            const result = await counterRef.transaction((current) => {
+                return (current || 0) + 1;
+            });
+            return result.snapshot.val();
         }
 
         // Switch between views
@@ -799,10 +860,6 @@
             
             document.getElementById(view + '-view').classList.add('active');
             document.querySelector(`.mode-btn[onclick="showView('${view}')"]`).classList.add('active');
-            
-            if (view === 'harper') {
-                renderOrders();
-            }
         }
 
         // Add item to cart
@@ -870,7 +927,7 @@
         }
 
         // Place order
-        function placeOrder() {
+        async function placeOrder() {
             const customerName = document.getElementById('customer-name').value || 'Customer';
             const instructions = document.getElementById('special-instructions').value;
             
@@ -882,25 +939,25 @@
             let total = 0;
             items.forEach(item => total += item.price * item.quantity);
             
+            const orderNumber = await getNextOrderNumber();
+            
             const order = {
-                id: orderCounter++,
+                id: orderNumber,
                 customer: customerName,
                 items: items,
                 total: total,
                 instructions: instructions,
                 status: 'new',
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                timestamp: Date.now()
             };
             
-            orders.unshift(order);
-            saveState();
+            // Save to Firebase
+            await database.ref('orders/' + orderNumber).set(order);
             
             // Show confirmation
             document.getElementById('modal-order-num').textContent = order.id;
             document.getElementById('order-modal').classList.add('active');
-            
-            // Play sound for Harper
-            playNotification();
             
             // Clear cart
             cart = {};
@@ -1009,19 +1066,13 @@
 
         // Update order status
         function updateOrderStatus(orderId, newStatus) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = newStatus;
-                saveState();
-                renderOrders();
-            }
+            database.ref('orders/' + orderId + '/status').set(newStatus);
         }
 
         // Sound notification
         function playNotification() {
             if (!soundEnabled) return;
             
-            // Create a simple beep using Web Audio API
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
@@ -1049,21 +1100,7 @@
             document.getElementById('sound-toggle').textContent = soundEnabled ? '🔔' : '🔕';
         }
 
-        // Check for new orders periodically (for Harper's view)
-        let lastOrderCount = 0;
-        setInterval(() => {
-            loadState();
-            const currentCount = orders.filter(o => o.status === 'new').length;
-            
-            if (currentCount > lastOrderCount && document.getElementById('harper-view').classList.contains('active')) {
-                playNotification();
-                renderOrders();
-            }
-            lastOrderCount = currentCount;
-        }, 2000);
-
         // Initialize
-        loadState();
         renderCart();
     </script>
 </body>
